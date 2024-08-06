@@ -46,24 +46,77 @@ const imageUrl = ref("");
 function chatSubmit() {
   chat.chatCompletion(text.value, imageUrl.value);
   text.value = "";
+  imageUrl.value = "";
 }
 
 function uploadImage(event) {
   const file = event.target.files[0];
-  const formData = new FormData();
-  formData.append("image", file);
-  axios
-    .post(
-      `https://api.imgbb.com/1/upload?key=${process.env["VUE_APP_IMGBB_API_KEY"]}`,
-      formData
-    )
-    .then((response) => {
-      imageUrl.value = response.data.data.url;
-      console.log(imageUrl.value);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  const img = new Image();
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = (e) => {
+    img.src = e.target.result;
+
+    img.onload = () => {
+      const originalWidth = img.width;
+      const originalHeight = img.height;
+
+      // Desired maximum dimensions
+      const maxWidth = 800; // Set your maximum width
+      const maxHeight = 600; // Set your maximum height
+
+      let width = originalWidth;
+      let height = originalHeight;
+
+      // Calculate new dimensions maintaining aspect ratio
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      // Create canvas and set dimensions
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+
+      // Draw the resized image on the canvas
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Convert canvas to a Blob for uploading
+      canvas.toBlob(
+        (blob) => {
+          const formData = new FormData();
+          formData.append("image", blob, file.name);
+
+          // Upload the resized image
+          axios
+            .post(
+              `https://api.imgbb.com/1/upload?key=${process.env["VUE_APP_IMGBB_API_KEY"]}`,
+              formData
+            )
+            .then((response) => {
+              imageUrl.value = response.data.data.url;
+              console.log(imageUrl.value);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        },
+        "image/jpeg",
+        0.8
+      ); // Set desired format and quality
+    };
+  };
 }
 function appendNewLine(event) {
   event.preventDefault();

@@ -4,11 +4,15 @@
       <div
         class="bg-slate-700 rounded-xl shadow-lg my-1 py-5 px-2 self-end flex items-center gap-3 max-w-[50vw] opacity-85"
       >
-        <div v-if="Array.isArray(content)">
+        <div>
           <p class="ml-3 max-w-[50vw] mb-2">{{ content[0].text }}</p>
-          <img :src="content[1].image_url.url" alt="" width="500" />
+          <img
+            v-if="content[1]"
+            :src="content[1].image_url.url"
+            alt=""
+            width="500"
+          />
         </div>
-        <p v-else class="ml-3 max-w-[50vw] mb-2">{{ content }}</p>
 
         <div
           class="h-10 w-10 fill-white bg-slate-600 p-2 rounded-full flex items-center"

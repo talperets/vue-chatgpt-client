@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import OpenAI from "openai";
+
 const messagesArr = () => {
   const existingMessages = localStorage.getItem("messages");
   if (!existingMessages) {
@@ -22,38 +23,40 @@ export const useChatStore = defineStore("chat", {
   }),
   actions: {
     async chatCompletion(text, imageUrl) {
-      this.allConversations[this.currentConversationIndex].push({
+      const userMessage = {
         role: "user",
-        content: imageUrl
-          ? [
-              { type: "text", text: text },
-              {
-                type: "image_url",
-                image_url: {
-                  url: imageUrl,
-                },
-              },
-            ]
-          : text,
-      });
+        content: [{ type: "text", text: text }],
+      };
+
+      if (imageUrl) {
+        userMessage.content.push({
+          type: "image_url",
+          image_url: {
+            url: imageUrl,
+          },
+        });
+      }
+
+      this.allConversations[this.currentConversationIndex].push(userMessage);
       this.loading = true;
-      const hasImage = this.allConversations[
-        this.currentConversationIndex
-      ].some(
-        (message) =>
-          Array.isArray(message.content) &&
-          message.content.some((item) => item.type === "image_url")
-      );
+
       const res = await this.client.chat.completions.create({
         messages: [
           { role: "system", content: this.prePrompt },
-          ...this.allConversations[this.currentConversationIndex],
+          ...this.allConversations[this.currentConversationIndex].map(
+            (msg) => ({
+              role: msg.role,
+              content: msg.content,
+            })
+          ),
         ],
-        model: hasImage ? "gpt-4o-mini" : "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
       });
+
       this.allConversations[this.currentConversationIndex].push(
         res.choices[0].message
       );
+
       localStorage.setItem("messages", JSON.stringify(this.allConversations));
       this.loading = false;
     },
