@@ -37,19 +37,12 @@ export const useChatStore = defineStore("chat", {
           : text,
       });
       this.loading = true;
-      const hasImage = this.allConversations[
-        this.currentConversationIndex
-      ].some(
-        (message) =>
-          Array.isArray(message.content) &&
-          message.content.some((item) => item.type === "image_url")
-      );
       const res = await this.client.chat.completions.create({
         messages: [
           { role: "system", content: this.prePrompt },
           ...this.allConversations[this.currentConversationIndex],
         ],
-        model: hasImage ? "gpt-4o-mini" : "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo",
       });
       this.allConversations[this.currentConversationIndex].push(
         res.choices[0].message

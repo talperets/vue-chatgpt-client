@@ -8,9 +8,7 @@
         v-on:click="() => setConvo(idx)"
         :class="chat.currentConversationIndex == idx && 'bg-black'"
         >{{
-          Array.isArray(conversation[0])
-            ? conversation[0].content[0].text.substring(0, 30)
-            : conversation[0].content.substring(0, 30)
+          conversation.length ? conversation[0].content.substring(0, 30) : ""
         }}</button
       >
     </template>
