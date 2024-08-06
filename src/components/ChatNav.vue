@@ -8,7 +8,7 @@
         v-on:click="() => setConvo(idx)"
         :class="chat.currentConversationIndex == idx && 'bg-black'"
         >{{
-          conversation && conversation[0].content[0].text.substring(0, 30)
+          conversation.length ? conversation[0].content[0].text : ""
         }}</button
       >
     </template>
@@ -24,9 +24,6 @@ function setConvo(idx) {
 function newChat() {
   chat.allConversations.push([]);
   chat.currentConversationIndex = chat.allConversations.length - 1;
-  localStorage.setItem(
-    "messages_vision",
-    JSON.stringify(this.allConversations)
-  );
+  localStorage.setItem("messages_vision", JSON.stringify(allConversations));
 }
 </script>

@@ -11,10 +11,7 @@
       @keydown.enter.exact.prevent="chatSubmit"
       @keydown.enter.shift.exact.prevent="appendNewLine"
     />
-    <label
-      for="logo_upload"
-      class="bg-slate-700 p-2 w-11 h-11 rounded-xl fill-slate-400 cursor-pointer hover:shadow-md active:shadow-none disabled:bg-slate-600 disabled:shadow-none"
-    >
+    <label for="logo_upload" :class="imageUrl.length ? uploaded : notUploaded">
       <UploadIcon />
       <input
         type="file"
@@ -42,6 +39,10 @@ import axios from "axios";
 const chat = useChatStore();
 const text = ref("");
 const imageUrl = ref("");
+const notUploaded =
+  "bg-slate-700 p-2 w-11 h-11 rounded-xl fill-slate-400 cursor-pointer hover:shadow-md active:shadow-none disabled:bg-slate-600 disabled:shadow-none";
+const uploaded =
+  "bg-green-400 p-2 w-11 h-11 rounded-xl fill-slate-100 cursor-pointer hover:shadow-md active:shadow-none disabled:bg-slate-600 disabled:shadow-none";
 
 function chatSubmit() {
   chat.chatCompletion(text.value, imageUrl.value);
