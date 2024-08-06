@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import OpenAI from "openai";
 
 const messagesArr = () => {
-  const existingMessages = localStorage.getItem("messages");
+  const existingMessages = localStorage.getItem("messages_vision");
   if (!existingMessages) {
     return [[]];
   } else {
@@ -57,7 +57,10 @@ export const useChatStore = defineStore("chat", {
         res.choices[0].message
       );
 
-      localStorage.setItem("messages", JSON.stringify(this.allConversations));
+      localStorage.setItem(
+        "messages_vision",
+        JSON.stringify(this.allConversations)
+      );
       this.loading = false;
     },
   },

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gradient-to-br from-cyan-400 to-purple-600 w-[100vw] h-[100vh] flex justify-center text-white
+  @apply bg-gradient-to-br from-black to-purple-600 w-[100vw] h-[100vh] flex justify-center text-white
 }
 
 .no-scrollbar::-webkit-scrollbar {
